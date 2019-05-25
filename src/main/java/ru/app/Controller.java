@@ -10,6 +10,7 @@ import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
 
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -53,6 +54,8 @@ public class Controller {
     public void update(@RequestBody Person person) {
         List<Integer> listId = personRepository.findAll().stream().map(Person::getId).collect(Collectors.toList());
         if (listId.contains(person.getId())) {
+            person.setComment("Update");
+            person.setUpdateDate(new Timestamp(System.currentTimeMillis()));
             personRepository.save(person);
         } else {
             System.out.println("not exist is person with id");
@@ -66,7 +69,7 @@ public class Controller {
      * @return
      */
     private String getCurrenntDataTime() {
-        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
 

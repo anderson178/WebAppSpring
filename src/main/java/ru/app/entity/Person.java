@@ -8,6 +8,7 @@ import java.util.Date;
 @Table(name = "person")
 public class Person {
     @Id
+   // @GeneratedValue(strategy=GenerationType.AUTO)
     @Column (name = "id", columnDefinition = "int", unique=true, nullable=false)
     Integer id;
     @Column (name = "last_name")

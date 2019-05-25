@@ -4,6 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import ru.app.entity.Person;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ClientTest {
@@ -41,9 +43,10 @@ public class ClientTest {
 
     public static void main(String[] args) {
         //new ClientTest().removeById(3);
-        new ClientTest().update(new Person(4,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
+        new ClientTest().update(new Person(3,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
         //new ClientTest().getFindById(3);
-         //new ClientTest().add(new Person(3,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
+         //new ClientTest().add(new Person(3, "Mironenko", "Vasia", "Sergeevich", new Date(1989,10,21)));
+        //System.out.println(new Timestamp(System.currentTimeMillis()).toString());
     }
 
 }
