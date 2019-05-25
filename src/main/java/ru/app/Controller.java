@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
+
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,16 +20,9 @@ import java.util.List;
 @RequestMapping(value = "/map")
 public class Controller {
     private static final String QUERY_GET_TEN = "SELECT last_name, first_name FROM person";
-    private static final int MIN_W = 0;
-    private static final int MAX_W = 90;
-    private static final int MIN_L = 0;
-    private static final int MAX_L = 180;
-    private static final int MIN_T = -40;
-    private static final int MAX_T = 40;
     private SqlRowSet srs;
 
     @Autowired
-    //private JdbcTemplate jdbcTemplate;
     private PersonRepository personRepository;
 
     /**
@@ -38,41 +30,30 @@ public class Controller {
      *
      * @return
      */
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public List<String> getStr() {
         List<String> rst = new ArrayList<>();
-        Iterator<Person> persons = personRepository.findAll().iterator();
-        while (persons.hasNext()) {
-            rst.add(persons.next().toString());
-        }
+        personRepository.findAll().forEach(person -> rst.add(person.toString()));
         return rst;
     }
 
-    /**
-     * Processing method post requestю.
-     * Accepts object class metering. Retrieves a set of marameters.
-     * Checks for validates input parameters.
-     * If everything is in order, it will write to the database, otherwise it will throw an
-     * exception and send the status BED_REQUEST
-     *
-     * @param metering - object of class Metering
-     */
-    /*@RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void add(@RequestBody Metering metering) {
-        String width = metering.getWidth();
-        String longitude = metering.getLongitude();
-        String temperature = metering.getTemperature();
-        if (ValidateInput.checkWL(MIN_W, MAX_W, width) && ValidateInput.checkWL(MIN_L, MAX_L, longitude)
-                && ValidateInput.checkTemperature(MIN_T, MAX_T, temperature)) {
-            String values = "'" + width + "','" + longitude + "','" + temperature + "','"
-                    + this.getCurrenntDataTime() + "'";
-            jdbcTemplate.update("insert into temperature_indicators (width, longitude, temperature, datatime)"
-                    + "values (" + values + ")");
-        } else {
-            throw new ExceptionInvalidInput("invalid data input");
-        }
+    @RequestMapping(value = "/getById", method = RequestMethod.GET)
+    public String findById(@RequestParam(value = "parm") Integer id) {
+       return personRepository.findById(id).toString();
+    }
 
-    }*/
+
+    @Transactional
+    @RequestMapping(value = "/remove", method = RequestMethod.POST)
+    public void remove(@RequestBody Integer id) {
+        personRepository.deletePersonById(id);
+        //personRepository.deleteByLastName("Mironenko");
+    }
+
+    @RequestMapping(value = "/addPerson", method = RequestMethod.POST)
+    public void add(@RequestBody Person person) {
+        personRepository.save(person);
+    }
 
     /**
      * Method that forms the current date and time
