@@ -7,35 +7,43 @@ import ru.app.entity.Person;
 import java.util.Date;
 
 public class ClientTest {
-    private static final String URL = "http://127.0.0.1:8080/map/addPerson";
-    private static final String URLBYID = "http://127.0.0.1:8080/map/getById?parm={parm}";
-    private static final String URLREMOVEBYID = "http://127.0.0.1:8080/map/remove";
+    private static final String ADD = "http://127.0.0.1:8080/map/addPerson";
+    private static final String BYID = "http://127.0.0.1:8080/map/getById?parm={parm}";
+    private static final String REMOVEBYID = "http://127.0.0.1:8080/map/removePerson";
+    private static final String UPDATE = "http://127.0.0.1:8080/map/updatePerson";
 
 
-    public void toSend(Person person) {
+    public void add(Person person) {
         ResponseEntity<Person> responseEntity = new RestTemplate().postForEntity(
-                URL, person, Person.class);
+                ADD, person, Person.class);
+        System.out.println(responseEntity.getStatusCode());
+    }
+
+    public void update (Person person) {
+        ResponseEntity<Person> responseEntity = new RestTemplate().postForEntity(
+                UPDATE, person, Person.class);
         System.out.println(responseEntity.getStatusCode());
     }
 
     public void getFindById(Integer id) {
         ResponseEntity<String> responseEntity = new RestTemplate().getForEntity(
-                URLBYID, String.class, id);
+               BYID, String.class, id);
         System.out.println(responseEntity.toString());
 
     }
 
     public void removeById(Integer id) {
         ResponseEntity<Integer> responseEntity = new RestTemplate().postForEntity(
-                URLREMOVEBYID, id, Integer.class);
+                REMOVEBYID, id, Integer.class);
         System.out.println(responseEntity.getStatusCode());
 
     }
 
     public static void main(String[] args) {
-        new ClientTest().removeById(3);
+        //new ClientTest().removeById(3);
+        new ClientTest().update(new Person(4,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
         //new ClientTest().getFindById(3);
-         //new ClientTest().toSend(new Person(3,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
+         //new ClientTest().add(new Person(3,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
     }
 
 }

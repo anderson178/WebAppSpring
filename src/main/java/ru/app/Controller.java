@@ -13,8 +13,8 @@ import ru.app.entity.PersonRepository;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/map")
@@ -25,11 +25,6 @@ public class Controller {
     @Autowired
     private PersonRepository personRepository;
 
-    /**
-     * Processing method get request
-     *
-     * @return
-     */
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public List<String> getStr() {
         List<String> rst = new ArrayList<>();
@@ -47,7 +42,6 @@ public class Controller {
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
     public void remove(@RequestBody Integer id) {
         personRepository.deletePersonById(id);
-        //personRepository.deleteByLastName("Mironenko");
     }
 
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST)
@@ -55,13 +49,24 @@ public class Controller {
         personRepository.save(person);
     }
 
+    @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
+    public void update(@RequestBody Person person) {
+        List<Integer> listId = personRepository.findAll().stream().map(Person::getId).collect(Collectors.toList());
+        if (listId.contains(person.getId())) {
+            personRepository.save(person);
+        } else {
+            System.out.println("not exist is person with id");
+        }
+    }
+
+
     /**
      * Method that forms the current date and time
      *
      * @return
      */
     private String getCurrenntDataTime() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
 
