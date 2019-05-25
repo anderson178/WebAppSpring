@@ -43,7 +43,7 @@ public class ClientTest {
 
     public static void main(String[] args) {
         //new ClientTest().removeById(3);
-        new ClientTest().update(new Person(3,"Mironenko", "Denis", "Sergeevich", new Date(1989,10,21)));
+        new ClientTest().update(new Person(4,"Mironenko", "Denis", "lalalal", new Date(1989,10,21)));
         //new ClientTest().getFindById(3);
          //new ClientTest().add(new Person(3, "Mironenko", "Vasia", "Sergeevich", new Date(1989,10,21)));
         //System.out.println(new Timestamp(System.currentTimeMillis()).toString());
