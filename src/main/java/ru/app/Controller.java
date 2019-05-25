@@ -1,16 +1,20 @@
 package ru.app;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ru.app.entity.Person;
+import ru.app.entity.PersonRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 @RestController
@@ -26,7 +30,8 @@ public class Controller {
     private SqlRowSet srs;
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    //private JdbcTemplate jdbcTemplate;
+    private PersonRepository personRepository;
 
     /**
      * Processing method get request
@@ -35,10 +40,10 @@ public class Controller {
      */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public List<String> getStr() {
-        srs = jdbcTemplate.queryForRowSet(QUERY_GET_TEN);
         List<String> rst = new ArrayList<>();
-        while (srs.next()) {
-            rst.add(srs.getString("last_name") + " " + srs.getString("first_name"));
+        Iterator<Person> persons = personRepository.findAll().iterator();
+        while (persons.hasNext()) {
+            rst.add(persons.next().toString());
         }
         return rst;
     }
