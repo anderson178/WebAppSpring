@@ -38,7 +38,7 @@ $(document).ready(function () {
                 alert(button);
                 break;
             case "update":
-                alert(button);
+                postQuery("http://127.0.0.1:8080/updatePerson", formData);
                 break;
         }
         event.preventDefault();

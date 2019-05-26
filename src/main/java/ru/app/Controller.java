@@ -76,15 +76,20 @@ public class Controller {
     }
 
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
-    public void update(@RequestBody Person person) {
+    public String update(@RequestBody Person person) {
+        String rst = null;
         if (personRepository.findById(person.getId()).isPresent()) {
-            person.setComment("Update");
-            person.setUpdateDate(new Timestamp(System.currentTimeMillis()));
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            person.setComment("Update " + timestamp);
+            person.setUpdateDate(timestamp);
             personRepository.save(person);
+            rst = person.toString() + " =  update";
+
         } else {
             //TODO передать данные на фронт
-            System.out.println(" = not exist is person with id");
+            rst = person.toString() + "not exist is person with id";
         }
+        return rst;
     }
 
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
