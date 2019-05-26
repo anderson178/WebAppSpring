@@ -55,27 +55,40 @@ public class Controller {
                 .orElseThrow(Exception::new);
     }
 
-
     @Transactional
-    @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    public void remove(@RequestBody Integer id) {
-        personRepository.deletePersonById(id);
+    @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
+    public String remove(@RequestParam(name = "id") Integer id) {
+        Optional<Person> optional = personRepository.findById(id);
+        String rst = null;
+        if (optional.isPresent()) {
+            Person person = optional.get();
+            rst = person.toString() + " = remove";
+            personRepository.delete(person);
+        } else {
+            rst = "Person with id not exist";
+        }
+        return rst;
     }
 
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String add(@RequestBody Person person) throws Exception {
-        Optional<Person> optional = personRepository.findById(person.getId());
         String rst = null;
-        if (!optional.isPresent()) {
+        if (person.getId() != 0) {
+            Optional<Person> optional = personRepository.findById(person.getId());
+            if (!optional.isPresent()) {
+                personRepository.save(person);
+                rst = person.toString() + " =  add";
+            } else {
+                rst = person.toString() + " = there is already a person with such id";
+            }
+        } else {
             personRepository.save(person);
             rst = person.toString() + " =  add";
-        } else {
-            rst = person.toString() + " = there is already a person with such id";
         }
        return  rst;
     }
 
-    @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String update(@RequestBody Person person) {
         String rst = null;
         if (personRepository.findById(person.getId()).isPresent()) {
@@ -84,7 +97,6 @@ public class Controller {
             person.setUpdateDate(timestamp);
             personRepository.save(person);
             rst = person.toString() + " =  update";
-
         } else {
             //TODO передать данные на фронт
             rst = person.toString() + "not exist is person with id";
@@ -124,7 +136,6 @@ public class Controller {
         }
         return result.toString();
     }
-
 
     /**
      * Method that forms the current date and time

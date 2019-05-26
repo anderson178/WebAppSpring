@@ -35,7 +35,7 @@ $(document).ready(function () {
                 alert(button);
                 break;
             case "remove":
-                alert(button);
+                postQueryRemove("http://127.0.0.1:8080/removePerson", formData);
                 break;
             case "update":
                 postQuery("http://127.0.0.1:8080/updatePerson", formData);
@@ -44,6 +44,19 @@ $(document).ready(function () {
         event.preventDefault();
         console.log($(this).serialize());
     });
+
+    function postQueryRemove(url, formData) {
+        var id = formData.get('id');
+        alert(id);
+        $.post(url, {id: id})
+            .done(function (data) {
+                alert(data)
+            })
+            .fail(function () {
+                alert("error");
+            });
+
+    }
 
     function postQuery(url, formData) {
         var person = {
@@ -58,7 +71,7 @@ $(document).ready(function () {
             type: 'POST',
             url: url,
             data: JSON.stringify(person),
-            contentType:"application/json; charset=utf-8",
+            contentType: "application/json; charset=utf-8",
             processData: false,
             success: function (data) {
                 alert(data);
@@ -83,25 +96,6 @@ $(document).ready(function () {
             })
     });
 
-// $("#processButton").click(function () {    //
-//     var checked = [];
-//     $("#names input[type=checkbox]:checked").each(function () {
-//         var row = $(this).closest("tr")[0];
-//         var person = {
-//             id: row.cells[1].innerHTML,
-//             firstName: row.cells[2].innerHTML,
-//             lastName: row.cells[3].innerHTML,
-//             middleName: row.cells[4].innerHTML,
-//             birthDate:row.cells[5].innerHTML
-//         };
-//         checked.push(person);
-//         //checked.push("   "+row.cells[1].innerHTML + "   " + row.cells[2].innerHTML + "   " + row.cells[3].innerHTML + "   " + row.cells[4].innerHTML + "   " + row.cells[5].innerHTML+"\n")
-//     });
-//     $.post("http://127.0.0.1:8080/updatePersons", checked);
-//     alert(checked);
-// });
-
-
     $("#processButton").click(function () {
         var checked = [];
         $("#names input[type=checkbox]:checked").each(function () {
@@ -124,6 +118,24 @@ $(document).ready(function () {
 
     });
 
+
+// $("#processButton").click(function () {    //
+//     var checked = [];
+//     $("#names input[type=checkbox]:checked").each(function () {
+//         var row = $(this).closest("tr")[0];
+//         var person = {
+//             id: row.cells[1].innerHTML,
+//             firstName: row.cells[2].innerHTML,
+//             lastName: row.cells[3].innerHTML,
+//             middleName: row.cells[4].innerHTML,
+//             birthDate:row.cells[5].innerHTML
+//         };
+//         checked.push(person);
+//         //checked.push("   "+row.cells[1].innerHTML + "   " + row.cells[2].innerHTML + "   " + row.cells[3].innerHTML + "   " + row.cells[4].innerHTML + "   " + row.cells[5].innerHTML+"\n")
+//     });
+//     $.post("http://127.0.0.1:8080/updatePersons", checked);
+//     alert(checked);
+// });
 
 
 })

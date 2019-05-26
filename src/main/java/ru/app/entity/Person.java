@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @Entity
 @Table(name = "person")
@@ -15,24 +14,25 @@ import java.util.Date;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Person {
+    //TODO негенит Id сам, поправить
     @Id
-   // @GeneratedValue(strategy=GenerationType.AUTO)
-    @Column (name = "id", columnDefinition = "int", unique=true, nullable=false)
-    Integer id;
-    @Column (name = "last_name")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    int id;
+    @Column(name = "last_name")
     String lastName;
-    @Column (name = "first_name")
+    @Column(name = "first_name")
     String firstName;
-    @Column (name = "middle_name")
+    @Column(name = "middle_name")
     String middleName;
-    @Column (name = "birth_date")
+    @Column(name = "birth_date")
     Timestamp birthDate;
-    @Column (name = "comment")
+    @Column(name = "comment")
     String comment;
-    @Column (name = "update_date")
+    @Column(name = "update_date")
     Timestamp updateDate;
 
-    public Person(Integer id, String lastName, String firstName, String middleName, Timestamp birthDate) {
+    public Person(int id, String lastName, String firstName, String middleName, Timestamp birthDate) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
