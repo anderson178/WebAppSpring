@@ -26,8 +26,6 @@ $(document).ready(function () {
     $("form").on("submit", function (event) {
         var button = $(document.activeElement).attr('id');
         var formData = new FormData(document.getElementsByTagName('form')[0]);
-
-        // alert(formData.get('firstName'));
         switch (button) {
             case "add":
                 console.log(formData);
@@ -56,8 +54,6 @@ $(document).ready(function () {
             birthDate: formData.get('birthDate')
         };
         alert(JSON.stringify(person));
-
-
         $.ajax({
             type: 'POST',
             url: url,
@@ -65,6 +61,9 @@ $(document).ready(function () {
             contentType:"application/json; charset=utf-8",
             processData: false,
             success: function (data) {
+                alert(data);
+            },
+            error: function (data) {
                 alert(data);
             }
         });
@@ -107,22 +106,13 @@ $(document).ready(function () {
         var checked = [];
         $("#names input[type=checkbox]:checked").each(function () {
             var row = $(this).closest("tr")[0];
-            // var person = {
-                // id: row.cells[1].innerHTML
-                // firstName: row.cells[2].innerHTML,
-                // lastName: row.cells[3].innerHTML,
-                // middleName: row.cells[4].innerHTML,
-                // birthDate: row.cells[5].innerHTML
-            // };
             checked.push(row.cells[1].innerHTML);
-           // alert(JSON.stringify(checked));
         });
         $.ajax({
             url: 'http://127.0.0.1:8080/updatePersons',
             type: 'POST',
             data: JSON.stringify(checked),
             contentType: 'application/json; charset=utf-8',
-            // dataType: 'json',
             async: true,
             success: function (msg) {
                 alert(msg);
@@ -134,41 +124,6 @@ $(document).ready(function () {
 
     });
 
-
-// $("#testButton").click(function () {
-//     var checked = [];
-//     $("#names input[type=checkbox]:checked").each(function () {
-//         var row = $(this).closest("tr")[0];
-//         var person = {
-//             id: row.cells[1].innerHTML,
-//             firstName: row.cells[2].innerHTML,
-//             lastName: row.cells[3].innerHTML,
-//             middleName: row.cells[4].innerHTML,
-//             birthDate: new Date(row.cells[5].innerText.)
-//         };
-//
-//         checked.push(JSON.stringify(person));
-//     });
-//
-//     alert(checked);
-// });
-
-
-// $.get("http://127.0.0.1:8080/getAll")
-//     .done(function (data) {
-//         // alert( "Data Loaded: " + data );
-//         // var obj = jQuery.parseJSON(data);
-//         // alert(obj['last_name']);
-//         $('#names tbody').empty();
-//         for (var i = 0; i < data.length; i++) {
-//             $('#names tbody').append('<tr><td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td></tr>')
-//         }
-//
-//         alert(data)
-//     })
-//     .fail(function () {
-//         alert("error");
-//     });
 
 
 })

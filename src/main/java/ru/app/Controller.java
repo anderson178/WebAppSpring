@@ -63,9 +63,16 @@ public class Controller {
     }
 
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Person add(@RequestBody Person person) {
-        int i = 0;
-        return personRepository.save(person);
+    public String add(@RequestBody Person person) throws Exception {
+        Optional<Person> optional = personRepository.findById(person.getId());
+        String rst = null;
+        if (!optional.isPresent()) {
+            personRepository.save(person);
+            rst = person.toString() + " =  add";
+        } else {
+            rst = person.toString() + " = there is already a person with such id";
+        }
+       return  rst;
     }
 
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
@@ -76,7 +83,7 @@ public class Controller {
             personRepository.save(person);
         } else {
             //TODO передать данные на фронт
-            System.out.println("not exist is person with id");
+            System.out.println(" = not exist is person with id");
         }
     }
 
@@ -94,10 +101,10 @@ public class Controller {
                     person.setComment("Update " + timestamp);
                     person.setUpdateDate(timestamp);
                     personRepository.save(person);
-                    result.append(" Persons with " + listId.get(j) + "add ");
+                    result.append(" Persons with " + listId.get(j) + " = update ");
 
                 } else {
-                    result.append(" Persons with " + listId.get(j) + "not add ");
+                    result.append(" Persons with " + listId.get(j) + " = not update ");
                    // log.error("not exist is person with id");
                    // throw new NoSuchPerson("not exist is person with id");
                 }
