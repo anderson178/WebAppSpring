@@ -9,10 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ClientTest {
-    private static final String ADD = "http://127.0.0.1:8080/map/addPerson";
-    private static final String BYID = "http://127.0.0.1:8080/map/getById?parm={parm}";
-    private static final String REMOVEBYID = "http://127.0.0.1:8080/map/removePerson";
-    private static final String UPDATE = "http://127.0.0.1:8080/map/updatePerson";
+    private static final String ADD = "http://127.0.0.1:8080/addPerson";
+    private static final String BYID = "http://127.0.0.1:8080/getById?parm={parm}";
+    private static final String REMOVEBYID = "http://127.0.0.1:8080/removePerson";
+    private static final String UPDATE = "http://127.0.0.1:8080/updatePerson";
 
 
     public void add(Person person) {
@@ -42,10 +42,11 @@ public class ClientTest {
     }
 
     public static void main(String[] args) {
+       // Date date = new Date()
         //new ClientTest().removeById(3);
-        new ClientTest().update(new Person(4,"Mironenko", "Denis", "lalalal", new Date(1989,10,21)));
+        //new ClientTest().update(new Person(6,"dsf", "df", "dfal", new Date(1989,10,21)));
         //new ClientTest().getFindById(3);
-         //new ClientTest().add(new Person(3, "Mironenko", "Vasia", "Sergeevich", new Date(1989,10,21)));
+         //new ClientTest().add(new Person(6, "Hihio", "Vasia", "Sergeevich", new Date(1989,10,21)));
         //System.out.println(new Timestamp(System.currentTimeMillis()).toString());
     }
 

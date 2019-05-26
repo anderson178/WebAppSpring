@@ -15,49 +15,158 @@ $(document).ready(function () {
     //         });
     // });
 
+
+    // $("#add").click(function (evt) {
+    //     var values = [];
+    //     var formData = $("#formPerson").serializeArray();
+    //     alert(formData);
+    //     evt.preventDefault();
+    // });
+
+    $("form").on("submit", function (event) {
+        var button = $(document.activeElement).attr('id');
+        var formData = new FormData(document.getElementsByTagName('form')[0]);
+
+        // alert(formData.get('firstName'));
+        switch (button) {
+            case "add":
+                console.log(formData);
+                postQuery("http://127.0.0.1:8080/addPerson", formData);
+                break;
+            case "get":
+                alert(button);
+                break;
+            case "remove":
+                alert(button);
+                break;
+            case "update":
+                alert(button);
+                break;
+        }
+        event.preventDefault();
+        console.log($(this).serialize());
+    });
+
+    function postQuery(url, formData) {
+        var person = {
+            id: formData.get('id'),
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            middleName: formData.get('middleName'),
+            birthDate: formData.get('birthDate')
+        };
+        alert(JSON.stringify(person));
+
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(person),
+            contentType:"application/json; charset=utf-8",
+            processData: false,
+            success: function (data) {
+                alert(data);
+            }
+        });
+    }
+
+
     $("#fillButton").click(function () {
         $.get("http://127.0.0.1:8080/getAll")
             .done(function (data) {
                 $('#names tbody').empty();
                 for (var i = 0; i < data.length; i++) {
-                    var date = new Date(data[i]['birthDate']);
-                    // alert(date.getFullYear() + ' ' + date.getMonth()+' ' + date.getDate());
-                    $('#names tbody').append('<tr><td><input type="checkbox" id="blahA" value="1"/></td>   <td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td>    <td>' + date.getFullYear() + ' ' + date.getMonth() + ' ' + date.getDate() + '</td>   <td>' + data[i]['comment'] + '</td></tr>')
+                    var now = new Date(data[i]['birthDate']);
+                    var formated_date = now.toLocaleDateString();
+                    $('#names tbody').append('<tr><td><input type="checkbox" id="blahA" value="1"/></td>   <td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td> <td>' + formated_date + '</td>    <td>' + data[i]['comment'] + '</td></tr>')
+                    //<td>' + date.getFullYear() + ' ' + date.getMonth() + ' ' + date.getDate() + '</td>
                 }
             })
     });
 
+// $("#processButton").click(function () {    //
+//     var checked = [];
+//     $("#names input[type=checkbox]:checked").each(function () {
+//         var row = $(this).closest("tr")[0];
+//         var person = {
+//             id: row.cells[1].innerHTML,
+//             firstName: row.cells[2].innerHTML,
+//             lastName: row.cells[3].innerHTML,
+//             middleName: row.cells[4].innerHTML,
+//             birthDate:row.cells[5].innerHTML
+//         };
+//         checked.push(person);
+//         //checked.push("   "+row.cells[1].innerHTML + "   " + row.cells[2].innerHTML + "   " + row.cells[3].innerHTML + "   " + row.cells[4].innerHTML + "   " + row.cells[5].innerHTML+"\n")
+//     });
+//     $.post("http://127.0.0.1:8080/updatePersons", checked);
+//     alert(checked);
+// });
+
+
     $("#processButton").click(function () {
-        var message = "Id Name                  Country\n";
-        //Loop through all checked CheckBoxes in GridView.
+        var checked = [];
         $("#names input[type=checkbox]:checked").each(function () {
             var row = $(this).closest("tr")[0];
-            message += row.cells[1].innerHTML;
-            message += "   " + row.cells[2].innerHTML;
-            message += "   " + row.cells[3].innerHTML;
-            message += "   " + row.cells[4].innerHTML;
-            message += "\n";
+            // var person = {
+                // id: row.cells[1].innerHTML
+                // firstName: row.cells[2].innerHTML,
+                // lastName: row.cells[3].innerHTML,
+                // middleName: row.cells[4].innerHTML,
+                // birthDate: row.cells[5].innerHTML
+            // };
+            checked.push(row.cells[1].innerHTML);
+           // alert(JSON.stringify(checked));
         });
-        alert(message);
-        return false;
+        $.ajax({
+            url: 'http://127.0.0.1:8080/updatePersons',
+            type: 'POST',
+            data: JSON.stringify(checked),
+            contentType: 'application/json; charset=utf-8',
+            // dataType: 'json',
+            async: true,
+            success: function (msg) {
+                alert(msg);
+            }
+        });
+
     });
 
 
-    // $.get("http://127.0.0.1:8080/getAll")
-    //     .done(function (data) {
-    //         // alert( "Data Loaded: " + data );
-    //         // var obj = jQuery.parseJSON(data);
-    //         // alert(obj['last_name']);
-    //         $('#names tbody').empty();
-    //         for (var i = 0; i < data.length; i++) {
-    //             $('#names tbody').append('<tr><td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td></tr>')
-    //         }
-    //
-    //         alert(data)
-    //     })
-    //     .fail(function () {
-    //         alert("error");
-    //     });
+// $("#testButton").click(function () {
+//     var checked = [];
+//     $("#names input[type=checkbox]:checked").each(function () {
+//         var row = $(this).closest("tr")[0];
+//         var person = {
+//             id: row.cells[1].innerHTML,
+//             firstName: row.cells[2].innerHTML,
+//             lastName: row.cells[3].innerHTML,
+//             middleName: row.cells[4].innerHTML,
+//             birthDate: new Date(row.cells[5].innerText.)
+//         };
+//
+//         checked.push(JSON.stringify(person));
+//     });
+//
+//     alert(checked);
+// });
 
 
-});
+// $.get("http://127.0.0.1:8080/getAll")
+//     .done(function (data) {
+//         // alert( "Data Loaded: " + data );
+//         // var obj = jQuery.parseJSON(data);
+//         // alert(obj['last_name']);
+//         $('#names tbody').empty();
+//         for (var i = 0; i < data.length; i++) {
+//             $('#names tbody').append('<tr><td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td></tr>')
+//         }
+//
+//         alert(data)
+//     })
+//     .fail(function () {
+//         alert("error");
+//     });
+
+
+})
+;

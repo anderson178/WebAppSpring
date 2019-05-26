@@ -2,8 +2,11 @@ package ru.app;
 
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
 
@@ -12,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +32,9 @@ public class Controller {
     public List<Person> getStr() {
 //        List<Person> rst = new ArrayList<>();
 //        personRepository.findAll().forEach(person -> rst.add(person.toString()));
+        //List<Person> rst = personRepository.findAll().stream().map(person -> person.setBirthDate(new Date(person.getBirthDate().)));
+
+
         return personRepository.findAll();
     }
 
@@ -48,9 +55,10 @@ public class Controller {
         personRepository.deletePersonById(id);
     }
 
-    @RequestMapping(value = "/addPerson", method = RequestMethod.POST)
-    public void add(@RequestBody Person person) {
-        personRepository.save(person);
+    @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Person add(@RequestBody Person person) {
+        int i = 0;
+        return personRepository.save(person);
     }
 
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
@@ -65,19 +73,32 @@ public class Controller {
         }
     }
 
-    @RequestMapping(value = "/updatePersons", method = RequestMethod.POST)
-    @SneakyThrows(InterruptedException.class)
-    public void updateMass(@RequestBody Person[] persons) {
+    @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//    @SneakyThrows(InterruptedException.class)
+    public String updateMass(@RequestBody List<Integer> listId) {
         //TODO настройки по потокам считывать из файла properties
         ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        for (int i = 0; i < persons.length; i++) {
+//        List<Person> personList = personRepository.findByIdIn(listId);
+//        personList.forEach(person -> {
+//            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+//            person.setComment("Update " + timestamp);
+//            person.setUpdateDate(timestamp);
+//            personRepository.save(person);
+//        });
+
+        for (int i = 0; i < listId.size(); i++) {
             final int j = i;
             service.submit(() -> {
-                if (personRepository.findById(persons[j].getId()).isPresent()) {
-                    persons[j].setComment("Update");
-                    persons[j].setUpdateDate(new Timestamp(System.currentTimeMillis()));
-                    personRepository.save(persons[j]);
+                Optional<Person> optional = personRepository.findById(listId.get(j));
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                if (optional.isPresent()) {
+                    Person person = optional.get();
+                    person.setComment("Update " + timestamp);;
+                    person.setUpdateDate(timestamp);
+                    personRepository.save(person);
                 } else {
+
+
                     //TODO передать данные на фронт
                     System.out.println("not exist is person with id");
                 }
@@ -86,6 +107,7 @@ public class Controller {
         }
         service.shutdown();
         service.awaitTermination(5, TimeUnit.SECONDS);
+        return "WORKS!";
     }
 
 

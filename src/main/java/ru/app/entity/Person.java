@@ -26,13 +26,13 @@ public class Person {
     @Column (name = "middle_name")
     String middleName;
     @Column (name = "birth_date")
-    Date birthDate;
+    Timestamp birthDate;
     @Column (name = "comment")
     String comment;
     @Column (name = "update_date")
     Timestamp updateDate;
 
-    public Person(Integer id, String lastName, String firstName, String middleName, Date birthDate) {
+    public Person(Integer id, String lastName, String firstName, String middleName, Timestamp birthDate) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
