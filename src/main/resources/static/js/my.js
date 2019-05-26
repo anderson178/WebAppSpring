@@ -126,6 +126,9 @@ $(document).ready(function () {
             async: true,
             success: function (msg) {
                 alert(msg);
+            },
+            error: function (data) {
+                alert(data);
             }
         });
 

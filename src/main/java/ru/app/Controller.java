@@ -1,18 +1,18 @@
 package ru.app;
 
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
+import ru.app.exceptions.NoSuchPerson;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,9 +21,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @RestController
+@Slf4j
 @RequestMapping(value = "/")
+@PropertySource("classpath:threads.properties")
 public class Controller {
 
+    @Value("${maxthreads}")
+    private int maxthreads;
+
+    @Value("${await}")
+    private int await;
 
     @Autowired
     private PersonRepository personRepository;
@@ -35,7 +42,7 @@ public class Controller {
         //List<Person> rst = personRepository.findAll().stream().map(person -> person.setBirthDate(new Date(person.getBirthDate().)));
 
 
-        return personRepository.findAll();
+        return personRepository.findAllByOrderByIdAsc();
     }
 
     /*@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET)
@@ -74,18 +81,9 @@ public class Controller {
     }
 
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-//    @SneakyThrows(InterruptedException.class)
     public String updateMass(@RequestBody List<Integer> listId) {
-        //TODO настройки по потокам считывать из файла properties
-        ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-//        List<Person> personList = personRepository.findByIdIn(listId);
-//        personList.forEach(person -> {
-//            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-//            person.setComment("Update " + timestamp);
-//            person.setUpdateDate(timestamp);
-//            personRepository.save(person);
-//        });
-
+        StringBuilder result = new StringBuilder();
+        ExecutorService service = Executors.newFixedThreadPool(this.maxthreads);
         for (int i = 0; i < listId.size(); i++) {
             final int j = i;
             service.submit(() -> {
@@ -93,21 +91,26 @@ public class Controller {
                 Timestamp timestamp = new Timestamp(System.currentTimeMillis());
                 if (optional.isPresent()) {
                     Person person = optional.get();
-                    person.setComment("Update " + timestamp);;
+                    person.setComment("Update " + timestamp);
                     person.setUpdateDate(timestamp);
                     personRepository.save(person);
+                    result.append(" Persons with " + listId.get(j) + "add ");
+
                 } else {
-
-
-                    //TODO передать данные на фронт
-                    System.out.println("not exist is person with id");
+                    result.append(" Persons with " + listId.get(j) + "not add ");
+                   // log.error("not exist is person with id");
+                   // throw new NoSuchPerson("not exist is person with id");
                 }
-
             });
         }
         service.shutdown();
-        service.awaitTermination(5, TimeUnit.SECONDS);
-        return "WORKS!";
+        try {
+            service.awaitTermination(this.await, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage());
+            return e.getMessage();
+        }
+        return result.toString();
     }
 
 
