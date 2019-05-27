@@ -1,4 +1,4 @@
-package ru.app;
+package ru.app.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
-import ru.app.exceptions.NoSuchPerson;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -20,11 +19,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+
 @RestController
 @Slf4j
 @RequestMapping(value = "/")
 @PropertySource("classpath:threads.properties")
-public class Controller {
+public class ControllerPerson {
 
     @Value("${maxthreads}")
     private int maxthreads;
@@ -34,6 +34,8 @@ public class Controller {
 
     @Autowired
     private PersonRepository personRepository;
+
+
 
     @GetMapping(value = "/getAll")
     public List<Person> getStr() {
