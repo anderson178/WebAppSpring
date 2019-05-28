@@ -40,11 +40,6 @@ public class ControllerPerson {
 
     @GetMapping(value = "/getAll")
     public List<Person> getStr() {
-//        List<Person> rst = new ArrayList<>();
-//        personRepository.findAll().forEach(person -> rst.add(person.toString()));
-        //List<Person> rst = personRepository.findAll().stream().map(person -> person.setBirthDate(new Date(person.getBirthDate().)));
-
-
         return personRepository.findAllByOrderByIdAsc();
     }
 
@@ -56,21 +51,6 @@ public class ControllerPerson {
     public Person findById(@RequestBody Integer id) {
         return personRepository.findById(id).orElse(new Person(-1));
     }
-
-//    @Transactional
-//    @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
-//    public String remove(@RequestParam(name = "id") Integer id) {
-//        Optional<Person> optional = personRepository.findById(id);
-//        String rst = null;
-//        if (optional.isPresent()) {
-//            Person person = optional.get();
-//            rst = person.toString() + " = remove";
-//            personRepository.delete(person);
-//        } else {
-//            rst = "Person with id not exist";
-//        }
-//        return rst;
-//    }
 
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person remove(@RequestBody Integer id) {
@@ -109,14 +89,12 @@ public class ControllerPerson {
             result = person;
         } else {
            result = new Person(-1);
-            // rst = person.toString() + "not exist is person with id";
         }
         return result;
     }
 
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String updateMass(@RequestBody List<Integer> listId) {
-        StringBuilder result = new StringBuilder();
+    public void updateMass(@RequestBody List<Integer> listId) {
         ExecutorService service = Executors.newFixedThreadPool(this.maxthreads);
         for (int i = 0; i < listId.size(); i++) {
             final int j = i;
@@ -128,12 +106,6 @@ public class ControllerPerson {
                     person.setComment("Update " + timestamp);
                     person.setUpdateDate(timestamp);
                     personRepository.save(person);
-                    result.append(" Persons with " + listId.get(j) + " = update ");
-
-                } else {
-                    result.append(" Persons with " + listId.get(j) + " = not update ");
-                    // log.error("not exist is person with id");
-                    // throw new NoSuchPerson("not exist is person with id");
                 }
             });
         }
@@ -142,20 +114,7 @@ public class ControllerPerson {
             service.awaitTermination(this.await, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             log.error(e.getMessage());
-            return e.getMessage();
         }
-        return result.toString();
     }
-
-
-    /**
-     * Method that forms the current date and time
-     *
-     * @return
-     */
-    private String getCurrenntDataTime() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-    }
-
 
 }

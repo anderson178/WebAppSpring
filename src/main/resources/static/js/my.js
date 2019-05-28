@@ -138,14 +138,13 @@ $(document).ready(function () {
             contentType: 'application/json; charset=utf-8',
             async: true,
             success: function (msg) {
-                alert(msg);
+                fillTable();
+               // alert(msg);
             },
             error: function (data) {
                 alert(data);
             }
         });
-        fillTable();
-
     });
 
 })
