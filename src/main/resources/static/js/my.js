@@ -21,7 +21,7 @@ $(document).ready(function () {
         switch (button) {
             case "add":
                 console.log(formData);
-                postQuery(outUrl + "/addPerson", formData);
+                addUpdate(outUrl + "/addPerson", formData, button);
                 break;
             case "get":
                 getFindById(outUrl + "/findById", formData);
@@ -30,7 +30,7 @@ $(document).ready(function () {
                 postQueryRemove(outUrl + "/removePerson", formData);
                 break;
             case "update":
-                postQuery(outUrl + "/updatePerson", formData);
+                addUpdate(outUrl + "/updatePerson", formData);
                 break;
         }
         event.preventDefault();
@@ -91,15 +91,15 @@ $(document).ready(function () {
         });
     }
 
-    function postQuery(url, formData) {
+    function addUpdate(url, formData, button) {
+        var id = formData.get('id');
         var person = {
-            id: formData.get('id'),
+            id: id,
             firstName: formData.get('firstName'),
             lastName: formData.get('lastName'),
             middleName: formData.get('middleName'),
             birthDate: formData.get('birthDate')
         };
-        alert(JSON.stringify(person));
         $.ajax({
             type: 'POST',
             url: url,
@@ -107,7 +107,11 @@ $(document).ready(function () {
             contentType: "application/json; charset=utf-8",
             processData: false,
             success: function (data) {
-                alert(data);
+                if (data['id'] == '-1' && button == 'add') {
+                    alert('Person with such id already exists ' + id);
+                } else if (data['id'] == '-1' && button == 'update') {
+                    alert('Personnot not exist with id ' + id);
+                }
             },
             error: function (data) {
                 alert(data);

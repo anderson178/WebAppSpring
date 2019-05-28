@@ -75,52 +75,43 @@ public class ControllerPerson {
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person remove(@RequestBody Integer id) {
         Optional<Person> optional = personRepository.findById(id);
-        Person person = null;
+        Person result = null;
         if (optional.isPresent()) {
-            person = optional.get();
-            personRepository.delete(person);
+            result = optional.get();
+            personRepository.delete(result);
         } else {
-            person = new Person(-1);
+            result = new Person(-1);
         }
-        return person;
+        return result;
     }
 
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String add(@RequestBody Person person) throws Exception {
-        String rst = null;
-        if (person.getId() != null) {
+    public Person add(@RequestBody Person person) throws Exception {
+        Person result = null;
             Optional<Person> optional = personRepository.findById(person.getId());
             if (!optional.isPresent()) {
                 personRepository.save(person);
-                rst = person.toString() + " =  add";
+                result = person;
             } else {
-                rst = person.toString() + " = there is already a person with such id";
+                result = new Person(-1);
             }
-        } else {
-            Person p = new Person();
-            p.setLastName(person.getLastName());
-            p.setFirstName(person.getFirstName());
-
-            personRepository.save(p);
-            rst = person.toString() + " =  add";
-        }
-        return rst;
+        return result;
     }
 
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String update(@RequestBody Person person) {
-        String rst = null;
+    public Person update(@RequestBody Person person) {
+        Person result = null;
         if (personRepository.findById(person.getId()).isPresent()) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
             person.setComment("Update " + timestamp);
             person.setUpdateDate(timestamp);
             personRepository.save(person);
-            rst = person.toString() + " =  update";
+            result = person;
         } else {
-            //TODO передать данные на фронт
-            rst = person.toString() + "not exist is person with id";
+           result = new Person(-1);
+            // rst = person.toString() + "not exist is person with id";
         }
-        return rst;
+        return result;
     }
 
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
