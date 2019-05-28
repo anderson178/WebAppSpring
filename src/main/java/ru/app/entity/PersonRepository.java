@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PersonRepository extends CrudRepository<Person, Integer> {
      List<Person> findAllByOrderByIdAsc();
-     void  deletePersonById(Integer id);
-     List<Person> findByIdIn (List<Integer> idList);
+//     void  deletePersonById(Integer id);
+//     List<Person> findByIdIn (List<Integer> idList);
 }

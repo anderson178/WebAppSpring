@@ -1,6 +1,7 @@
 package ru.app.entity;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -11,14 +12,13 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "person")
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Person {
-    //TODO негенит Id сам, поправить
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    int id;
+    Integer id;
     @Column(name = "last_name")
     String lastName;
     @Column(name = "first_name")
@@ -32,11 +32,7 @@ public class Person {
     @Column(name = "update_date")
     Timestamp updateDate;
 
-    public Person(int id, String lastName, String firstName, String middleName, Timestamp birthDate) {
+    public Person(Integer id) {
         this.id = id;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.birthDate = birthDate;
     }
 }

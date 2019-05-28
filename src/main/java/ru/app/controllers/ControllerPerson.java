@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
+import ru.app.exceptions.NoSuchPerson;
 
+import javax.persistence.PersistenceException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +38,6 @@ public class ControllerPerson {
     private PersonRepository personRepository;
 
 
-
     @GetMapping(value = "/getAll")
     public List<Person> getStr() {
 //        List<Person> rst = new ArrayList<>();
@@ -51,15 +52,28 @@ public class ControllerPerson {
     public String findById(@PathVariable Integer id) {
         return personRepository.findById(id).toString();
     }*/
-    @RequestMapping(value = "/getById", method = RequestMethod.GET)
-    public Person findById(@RequestParam(value = "parm") Integer id) throws Exception {
-        return personRepository.findById(id)
-                .orElseThrow(Exception::new);
+    @RequestMapping(value = "/findById", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public Person findById(@RequestBody Integer id) {
+        return personRepository.findById(id).orElse(new Person(-1));
     }
 
-    @Transactional
-    @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
-    public String remove(@RequestParam(name = "id") Integer id) {
+//    @Transactional
+//    @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
+//    public String remove(@RequestParam(name = "id") Integer id) {
+//        Optional<Person> optional = personRepository.findById(id);
+//        String rst = null;
+//        if (optional.isPresent()) {
+//            Person person = optional.get();
+//            rst = person.toString() + " = remove";
+//            personRepository.delete(person);
+//        } else {
+//            rst = "Person with id not exist";
+//        }
+//        return rst;
+//    }
+
+    @RequestMapping(value = "/removePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public String remove(@RequestBody Integer id) {
         Optional<Person> optional = personRepository.findById(id);
         String rst = null;
         if (optional.isPresent()) {
@@ -75,7 +89,7 @@ public class ControllerPerson {
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public String add(@RequestBody Person person) throws Exception {
         String rst = null;
-        if (person.getId() != 0) {
+        if (person.getId() != null) {
             Optional<Person> optional = personRepository.findById(person.getId());
             if (!optional.isPresent()) {
                 personRepository.save(person);
@@ -84,10 +98,14 @@ public class ControllerPerson {
                 rst = person.toString() + " = there is already a person with such id";
             }
         } else {
-            personRepository.save(person);
+            Person p = new Person();
+            p.setLastName(person.getLastName());
+            p.setFirstName(person.getFirstName());
+
+            personRepository.save(p);
             rst = person.toString() + " =  add";
         }
-       return  rst;
+        return rst;
     }
 
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -124,8 +142,8 @@ public class ControllerPerson {
 
                 } else {
                     result.append(" Persons with " + listId.get(j) + " = not update ");
-                   // log.error("not exist is person with id");
-                   // throw new NoSuchPerson("not exist is person with id");
+                    // log.error("not exist is person with id");
+                    // throw new NoSuchPerson("not exist is person with id");
                 }
             });
         }
