@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -15,8 +16,13 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+//@SequenceGenerator(name="hibernate_sequence", initialValue=10, allocationSize=100)
 public class Person {
     @Id
+    //@GenericGenerator(name = "idGenerator", strategy = "increment")
+   // @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    //@GeneratedValue( generator = "idGenerator")
+    //@SequenceGenerator(name = "hibernate_sequence", sequenceName = "hibernate_sequence")
     @Column(name = "id")
     Integer id;
     @Column(name = "last_name")

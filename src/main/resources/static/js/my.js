@@ -1,8 +1,7 @@
 $(document).ready(function () {
 
-    // $.get( "http://127.0.0.1:8080/map/getById?parm={parm}", { name: "John", time: "2pm" } );
-
     var outUrl = "http://127.0.0.1:8080";
+
     $("form").on("submit", function (event) {
         var button = $(document.activeElement).attr('id');
         var formData = new FormData(document.getElementsByTagName('form')[0]);
@@ -98,6 +97,8 @@ $(document).ready(function () {
             success: function (data) {
                 if (data['id'] == '-1' && button == 'add') {
                     alert('Person with such id already exists ' + id);
+                } else if (data['id'] == '-2' && button == 'add') {
+                    alert('Index limit reached');
                 } else if (data['id'] == '-1' && button == 'update') {
                     alert('Personnot not exist with id ' + id);
                 } else {
@@ -120,11 +121,17 @@ $(document).ready(function () {
                 $('#names tbody').empty();
                 for (var i = 0; i < data.length; i++) {
                     var formated_date = new Date(data[i]['birthDate']).toLocaleDateString();
-                    $('#names tbody').append('<tr><td><input type="checkbox" id="blahA" value="1"/></td>   <td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td> <td>' + formated_date + '</td>    <td>' + data[i]['comment'] + '</td></tr>')
+                    $('#names tbody').append('<tr><td><input type="checkbox" id="blahA" value="1"/></td>' +
+                        '<td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td>' +
+                        '<td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td>' +
+                        '<td>' + formated_date + '</td>    <td>' + data[i]['comment'] + '</td></tr>')
                 }
             })
     }
 
+    /**
+     *
+     */
     $("#processButton").click(function () {
         var checked = [];
         $("#names input[type=checkbox]:checked").each(function () {
@@ -139,7 +146,6 @@ $(document).ready(function () {
             async: true,
             success: function (msg) {
                 fillTable();
-               // alert(msg);
             },
             error: function (data) {
                 alert(data);

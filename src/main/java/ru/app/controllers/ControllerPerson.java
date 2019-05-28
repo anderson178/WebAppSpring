@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -68,6 +69,16 @@ public class ControllerPerson {
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person add(@RequestBody Person person) throws Exception {
         Person result = null;
+        if(person.getId() == null) {
+            Integer id = this.idGenerated();
+            if (id != null) {
+                person.setId(id);
+                result = person;
+                personRepository.save(person);
+            } else {
+                result = new Person(-2);
+            }
+        } else {
             Optional<Person> optional = personRepository.findById(person.getId());
             if (!optional.isPresent()) {
                 personRepository.save(person);
@@ -75,6 +86,21 @@ public class ControllerPerson {
             } else {
                 result = new Person(-1);
             }
+        }
+
+
+        return result;
+    }
+
+    private Integer idGenerated() {
+        List<Integer> listId = personRepository.findAll().stream().map(Person::getId).collect(Collectors.toList());
+        Integer result = null;
+        for (int i = 1; i < Integer.MAX_VALUE; i++) {
+            if (!listId.contains(i)) {
+                result = i;
+               break;
+            }
+        }
         return result;
     }
 
