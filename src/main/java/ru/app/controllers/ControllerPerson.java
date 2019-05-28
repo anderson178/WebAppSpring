@@ -73,17 +73,16 @@ public class ControllerPerson {
 //    }
 
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public String remove(@RequestBody Integer id) {
+    public Person remove(@RequestBody Integer id) {
         Optional<Person> optional = personRepository.findById(id);
-        String rst = null;
+        Person person = null;
         if (optional.isPresent()) {
-            Person person = optional.get();
-            rst = person.toString() + " = remove";
+            person = optional.get();
             personRepository.delete(person);
         } else {
-            rst = "Person with id not exist";
+            person = new Person(-1);
         }
-        return rst;
+        return person;
     }
 
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
