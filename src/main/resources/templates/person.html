@@ -39,13 +39,13 @@
             <label for="id">id:</label>
             <input type="number" class="form-control" id="id" name="id">
             <label for="firstName">Фамилия:</label>
-            <input type="text" class="form-control" id="firstName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="firstName">
+            <input type="text" class="form-control" id="firstName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="firstName" required>
             <label for="lastName">Имя:</label>
-            <input type="text" class="form-control" id="lastName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="lastName">
+            <input type="text" class="form-control" id="lastName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="lastName" required>
             <label for="middleName">Отчество:</label>
-            <input type="text" class="form-control" id="middleName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="middleName">
+            <input type="text" class="form-control" id="middleName" pattern="[а-яА-ЯёЁ]+" title="Можно использовать только кириллицу" name="middleName" required>
             <label for="birthDate">Дата рождения:</label>
-            <input type="date" class="form-control" id="birthDate" name="birthDate">
+            <input type="date" class="form-control" id="birthDate" name="birthDate" required>
         </div>
         <button type="submit" id="add" class="btn btn-primary">Добавить</button>
         <button type="submit" id="get" class="btn btn-primary">Получить</button>

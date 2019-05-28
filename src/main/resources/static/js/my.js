@@ -8,7 +8,7 @@ $(document).ready(function () {
         switch (button) {
             case "add":
                 console.log(formData);
-                addUpdate(outUrl + "/addPerson", formData, button);
+                add(outUrl + "/addPerson", formData, button);
                 break;
             case "get":
                 getFindById(outUrl + "/findById", formData);
@@ -18,7 +18,7 @@ $(document).ready(function () {
                 fillTable();
                 break;
             case "update":
-                addUpdate(outUrl + "/updatePerson", formData);
+                update(outUrl + "/updatePerson", formData);
                 fillTable();
                 break;
         }
@@ -71,6 +71,8 @@ $(document).ready(function () {
             success: function (data) {
                 if (data['id'] == '-1') {
                     alert('Not exist is person with id ' + id);
+                } else {
+                    alert('Person with id ' + id + ' remove');
                 }
             },
             error: function (data) {
@@ -79,7 +81,7 @@ $(document).ready(function () {
         });
     }
 
-    function addUpdate(url, formData, button) {
+    function add(url, formData, button) {
         var id = formData.get('id');
         var person = {
             id: id,
@@ -95,14 +97,42 @@ $(document).ready(function () {
             contentType: "application/json; charset=utf-8",
             processData: false,
             success: function (data) {
-                if (data['id'] == '-1' && button == 'add') {
+                if (data['id'] == '-1') {
                     alert('Person with such id already exists ' + id);
-                } else if (data['id'] == '-2' && button == 'add') {
+                } else if (data['id'] == '-2') {
                     alert('Index limit reached');
-                } else if (data['id'] == '-1' && button == 'update') {
+                } else {
+                    fillTable();
+                    alert('Person with id ' + id + ' add');
+                }
+            },
+            error: function (data) {
+                alert(data);
+            }
+        });
+    }
+
+    function update(url, formData, button) {
+        var id = formData.get('id');
+        var person = {
+            id: id,
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            middleName: formData.get('middleName'),
+            birthDate: formData.get('birthDate')
+        };
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: JSON.stringify(person),
+            contentType: "application/json; charset=utf-8",
+            processData: false,
+            success: function (data) {
+                if (data['id'] == '-1') {
                     alert('Personnot not exist with id ' + id);
                 } else {
                     fillTable();
+                    alert('Person with id ' + id + ' update');
                 }
             },
             error: function (data) {

@@ -87,8 +87,6 @@ public class ControllerPerson {
                 result = new Person(-1);
             }
         }
-
-
         return result;
     }
 
