@@ -15,11 +15,9 @@ $(document).ready(function () {
                 break;
             case "remove":
                 remove(outUrl + "/removePerson", formData);
-                fillTable();
                 break;
             case "update":
                 update(outUrl + "/updatePerson", formData);
-                fillTable();
                 break;
         }
         event.preventDefault();
@@ -36,6 +34,7 @@ $(document).ready(function () {
             async: true,
             success: function (data) {
                 if (data['id'] == '-1') {
+                    fillTable();
                     alert('Not exist is person with id ' + id);
                 } else {
                     fillForm(data);
@@ -72,6 +71,7 @@ $(document).ready(function () {
                 if (data['id'] == '-1') {
                     alert('Not exist is person with id ' + id);
                 } else {
+                    fillTable();
                     alert('Person with id ' + id + ' remove');
                 }
             },
