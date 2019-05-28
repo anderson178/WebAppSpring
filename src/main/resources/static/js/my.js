@@ -2,18 +2,6 @@ $(document).ready(function () {
 
     // $.get( "http://127.0.0.1:8080/map/getById?parm={parm}", { name: "John", time: "2pm" } );
 
-    // $("#button").click(function () {
-    //     $.get("http://127.0.0.1:8080/getById", {parm: 1})
-    //         .done(function (data) {
-    //             // alert( "Data Loaded: " + data );
-    //             // var obj = jQuery.parseJSON(data);
-    //             // alert(obj['last_name']);
-    //             alert(data['lastName'])
-    //         })
-    //         .fail(function () {
-    //             alert("error");
-    //         });
-    // });
     var outUrl = "http://127.0.0.1:8080";
     $("form").on("submit", function (event) {
         var button = $(document.activeElement).attr('id');
@@ -27,10 +15,12 @@ $(document).ready(function () {
                 getFindById(outUrl + "/findById", formData);
                 break;
             case "remove":
-                postQueryRemove(outUrl + "/removePerson", formData);
+                remove(outUrl + "/removePerson", formData);
+                fillTable();
                 break;
             case "update":
                 addUpdate(outUrl + "/updatePerson", formData);
+                fillTable();
                 break;
         }
         event.preventDefault();
@@ -71,9 +61,8 @@ $(document).ready(function () {
         document.getElementById('birthDate').value = yyyy + "-" + mm + "-" + dd;
     }
 
-    function postQueryRemove(url, formData) {
+    function remove(url, formData) {
         var id = formData.get('id');
-        alert(id);
         $.ajax({
             url: url,
             type: 'POST',
@@ -111,6 +100,8 @@ $(document).ready(function () {
                     alert('Person with such id already exists ' + id);
                 } else if (data['id'] == '-1' && button == 'update') {
                     alert('Personnot not exist with id ' + id);
+                } else {
+                    fillTable();
                 }
             },
             error: function (data) {
@@ -120,17 +111,19 @@ $(document).ready(function () {
     }
 
     $("#fillButton").click(function () {
+        fillTable();
+    });
+
+    function fillTable() {
         $.get(outUrl + "/getAll")
             .done(function (data) {
                 $('#names tbody').empty();
                 for (var i = 0; i < data.length; i++) {
-                    var now = new Date(data[i]['birthDate']);
-                    var formated_date = now.toLocaleDateString();
+                    var formated_date = new Date(data[i]['birthDate']).toLocaleDateString();
                     $('#names tbody').append('<tr><td><input type="checkbox" id="blahA" value="1"/></td>   <td>' + data[i]['id'] + '</td><td>' + data[i]['firstName'] + '</td><td>' + data[i]['lastName'] + '</td><td>' + data[i]['middleName'] + '</td> <td>' + formated_date + '</td>    <td>' + data[i]['comment'] + '</td></tr>')
-                    //<td>' + date.getFullYear() + ' ' + date.getMonth() + ' ' + date.getDate() + '</td>
                 }
             })
-    });
+    }
 
     $("#processButton").click(function () {
         var checked = [];
@@ -151,28 +144,9 @@ $(document).ready(function () {
                 alert(data);
             }
         });
+        fillTable();
 
     });
-
-
-// $("#processButton").click(function () {    //
-//     var checked = [];
-//     $("#names input[type=checkbox]:checked").each(function () {
-//         var row = $(this).closest("tr")[0];
-//         var person = {
-//             id: row.cells[1].innerHTML,
-//             firstName: row.cells[2].innerHTML,
-//             lastName: row.cells[3].innerHTML,
-//             middleName: row.cells[4].innerHTML,
-//             birthDate:row.cells[5].innerHTML
-//         };
-//         checked.push(person);
-//         //checked.push("   "+row.cells[1].innerHTML + "   " + row.cells[2].innerHTML + "   " + row.cells[3].innerHTML + "   " + row.cells[4].innerHTML + "   " + row.cells[5].innerHTML+"\n")
-//     });
-//     $.post("http://127.0.0.1:8080/updatePersons", checked);
-//     alert(checked);
-// });
-
 
 })
 ;
