@@ -1,7 +1,15 @@
 $(document).ready(function () {
 
+    /**
+     * Url до сервера
+     *
+     * @type {string}
+     */
     var outUrl = "http://127.0.0.1:8080";
 
+    /**
+     * Метод отлавливания события нажатой кнопки
+     */
     $("form").on("submit", function (event) {
         var button = $(document.activeElement).attr('id');
         var formData = new FormData(document.getElementsByTagName('form')[0]);
@@ -24,6 +32,11 @@ $(document).ready(function () {
         console.log($(this).serialize());
     });
 
+    /**
+     * Метод поиска Person по id
+     * @param url - адрес запроса
+     * @param formData - содержмиое полей формы
+     */
     function getFindById(url, formData) {
         var id = formData.get('id');
         $.ajax({
@@ -47,6 +60,10 @@ $(document).ready(function () {
 
     }
 
+    /**
+     * Метод заполнения полей формы
+     * @param data - данные запрошенные у сервера
+     */
     function fillForm(data) {
         console.log($(this).serialize());
         document.getElementById('firstName').value = data['firstName'];
@@ -59,6 +76,11 @@ $(document).ready(function () {
         document.getElementById('birthDate').value = yyyy + "-" + mm + "-" + dd;
     }
 
+    /**
+     * Метод удаления Person
+     * @param url - адрес запроса
+     * @param formData - содержмиое полей формы
+     */
     function remove(url, formData) {
         var id = formData.get('id');
         $.ajax({
@@ -81,6 +103,11 @@ $(document).ready(function () {
         });
     }
 
+    /**
+     * Метод удаления Person
+     * @param url - адрес запроса
+     * @param formData - содержмиое полей формы
+     */
     function add(url, formData, button) {
         var id = formData.get('id');
         var person = {
@@ -112,6 +139,11 @@ $(document).ready(function () {
         });
     }
 
+    /**
+     * Метод обновдения полей Person
+     * @param url - адрес запроса
+     * @param formData - содержмиое полей формы
+     */
     function update(url, formData, button) {
         var id = formData.get('id');
         var person = {
@@ -141,6 +173,9 @@ $(document).ready(function () {
         });
     }
 
+    /**
+     * Метод отлавливания события нажатия кнопки fillButton
+     */
     $("#fillButton").click(function () {
         fillTable();
     });
@@ -160,7 +195,8 @@ $(document).ready(function () {
     }
 
     /**
-     *
+     * Метод обработки события кнопки processButton.
+     * Метод отправляет массив Person и принимает строку с измененными полями
      */
     $("#processButton").click(function () {
         var checked = [];

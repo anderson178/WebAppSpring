@@ -5,16 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.MediaType;
-import org.springframework.transaction.annotation.Transactional;
+
 import org.springframework.web.bind.annotation.*;
 import ru.app.entity.Person;
 import ru.app.entity.PersonRepository;
-import ru.app.exceptions.NoSuchPerson;
 
-import javax.persistence.PersistenceException;
+
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -22,6 +19,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * @author Денис Мироненко
+ * @version $Id$
+ * @since 29.05.2019
+ */
 
 @RestController
 @Slf4j
@@ -38,21 +40,30 @@ public class ControllerPerson {
     @Autowired
     private PersonRepository personRepository;
 
-
+    /**
+     * Метод возвращает из таблицы все записи
+     * @return - список элементов
+     */
     @GetMapping(value = "/getAll")
     public List<Person> getStr() {
         return personRepository.findAllByOrderByIdAsc();
     }
 
-    /*@RequestMapping(value = "/getById/{id}", method = RequestMethod.GET)
-    public String findById(@PathVariable Integer id) {
-        return personRepository.findById(id).toString();
-    }*/
+    /**
+     * Метод возвращает Person по id
+     * @param id - id запрашиваемого Person
+     * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1
+     */
     @RequestMapping(value = "/findById", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person findById(@RequestBody Integer id) {
         return personRepository.findById(id).orElse(new Person(-1));
     }
 
+    /**
+     * Метод удаляет Person по id
+     * @param id - id запрашиваемого Person
+     * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1
+     */
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person remove(@RequestBody Integer id) {
         Optional<Person> optional = personRepository.findById(id);
@@ -66,8 +77,14 @@ public class ControllerPerson {
         return result;
     }
 
+    /**
+     * Метод возвращает Person по id
+     * @param id - id запрашиваемого Person
+     * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1. Если
+     * был достигнут лимит индексов то вернет Person с id = -2
+     */
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Person add(@RequestBody Person person) throws Exception {
+    public Person add(@RequestBody Person person) {
         Person result = null;
         if(person.getId() == null) {
             Integer id = this.idGenerated();
@@ -90,6 +107,10 @@ public class ControllerPerson {
         return result;
     }
 
+    /**
+     * Метод генерации id
+     * @return - id
+     */
     private Integer idGenerated() {
         List<Integer> listId = personRepository.findAll().stream().map(Person::getId).collect(Collectors.toList());
         Integer result = null;
@@ -102,6 +123,11 @@ public class ControllerPerson {
         return result;
     }
 
+    /**
+     * Метод обновляет поля Person по id
+     * @param id - id запрашиваемого Person
+     * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = 1
+     */
     @RequestMapping(value = "/updatePerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person update(@RequestBody Person person) {
         Person result = null;
@@ -117,6 +143,10 @@ public class ControllerPerson {
         return result;
     }
 
+    /**
+     * Метод обновляет поля Person по id для каждого Person в отдельном потоке
+     * @param listId
+     */
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public void updateMass(@RequestBody List<Integer> listId) {
         ExecutorService service = Executors.newFixedThreadPool(this.maxthreads);
