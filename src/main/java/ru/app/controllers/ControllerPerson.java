@@ -42,6 +42,7 @@ public class ControllerPerson {
 
     /**
      * Метод возвращает из таблицы все записи
+     *
      * @return - список элементов
      */
     @GetMapping(value = "/getAll")
@@ -51,6 +52,7 @@ public class ControllerPerson {
 
     /**
      * Метод возвращает Person по id
+     *
      * @param id - id запрашиваемого Person
      * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1
      */
@@ -61,6 +63,7 @@ public class ControllerPerson {
 
     /**
      * Метод удаляет Person по id
+     *
      * @param id - id запрашиваемого Person
      * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1
      */
@@ -79,6 +82,7 @@ public class ControllerPerson {
 
     /**
      * Метод возвращает Person по id
+     *
      * @param id - id запрашиваемого Person
      * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = -1. Если
      * был достигнут лимит индексов то вернет Person с id = -2
@@ -86,7 +90,7 @@ public class ControllerPerson {
     @RequestMapping(value = "/addPerson", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public Person add(@RequestBody Person person) {
         Person result = null;
-        if(person.getId() == null) {
+        if (person.getId() == null) {
             Integer id = this.idGenerated();
             if (id != null) {
                 person.setId(id);
@@ -109,6 +113,7 @@ public class ControllerPerson {
 
     /**
      * Метод генерации id
+     *
      * @return - id
      */
     private Integer idGenerated() {
@@ -117,7 +122,7 @@ public class ControllerPerson {
         for (int i = 1; i < Integer.MAX_VALUE; i++) {
             if (!listId.contains(i)) {
                 result = i;
-               break;
+                break;
             }
         }
         return result;
@@ -125,6 +130,7 @@ public class ControllerPerson {
 
     /**
      * Метод обновляет поля Person по id
+     *
      * @param id - id запрашиваемого Person
      * @return - person. Если Perыщт по запрашиваемому id не был найжден то вернет Person c id = 1
      */
@@ -138,13 +144,14 @@ public class ControllerPerson {
             personRepository.save(person);
             result = person;
         } else {
-           result = new Person(-1);
+            result = new Person(-1);
         }
         return result;
     }
 
     /**
      * Метод обновляет поля Person по id для каждого Person в отдельном потоке
+     *
      * @param listId
      */
     @RequestMapping(value = "/updatePersons", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
